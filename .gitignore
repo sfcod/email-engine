@@ -1,0 +1,7 @@
+/phpunit.xml
+/.env
+/composer.lock
+/composer.phar
+/vendor/
+/node_modules/
+/.phpunit/

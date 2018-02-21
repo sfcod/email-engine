@@ -5,7 +5,7 @@ Provides possibility to send parametrized emails with attachments using queue of
 
 #### Config:
 ```yaml
-email_engine:
+sfcod_email_engine:
     main_sender: chained_sender
     senders:
         chained_sender:

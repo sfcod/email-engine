@@ -1,6 +1,8 @@
 Symfony Email Engine Bundle
 ===========================
 
+[![Scrutinizer Code Quality](https://scrutinizer-ci.com/g/sfcod/email-engine/badges/quality-score.png?b=master)](https://scrutinizer-ci.com/g/sfcod/email-engine/?branch=master)[![Code Climate](https://codeclimate.com/github/sfcod/email-engine/badges/gpa.svg)](https://codeclimate.com/github/sfcod/email-engine)
+
 Provides possibility to send parametrized emails with attachments using queue of senders+repositories combination.
 
 #### Config:

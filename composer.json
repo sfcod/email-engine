@@ -21,7 +21,8 @@
         "symfony/dotenv": "^4.0"
     },
     "require-dev": {
-        "symfony/phpunit-bridge": "^4.0"
+        "symfony/phpunit-bridge": "^4.0",
+        "friendsofphp/php-cs-fixer": "^2.8"
     },
     "autoload": {
         "psr-4": {

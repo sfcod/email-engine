@@ -3,5 +3,6 @@
 /composer.lock
 /composer.phar
 /vendor/
+/.php_cs.cache
 /node_modules/
 /.phpunit/

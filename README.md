@@ -25,7 +25,7 @@ sfcod_email_engine:
                 class: SfCod\EmailEngineBundle\Repository\DbRepository
                 arguments: { entity: Common\Shared\Entity\Email, attribute: slug }
     templates:
-        test_template: SfCod\EmailEngineBundle\Example\TestTemplate
+        - SfCod\EmailEngineBundle\Example\TestTemplate
 ```
 
 Where "templates" section needed for "SfCod\EmailEngineBundle\Mailer\TemplateManager" service.

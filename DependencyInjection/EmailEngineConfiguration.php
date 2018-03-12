@@ -121,7 +121,8 @@ class EmailEngineConfiguration implements ConfigurationInterface
         $rootNode
             ->children()
                 ->arrayNode('templates')
-                    ->scalarPrototype()->isRequired()->end()
+                    ->defaultValue([])
+                    ->scalarPrototype()->end()
                 ->end()
             ->end();
     }

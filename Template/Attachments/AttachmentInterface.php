@@ -2,7 +2,7 @@
 
 namespace SfCod\EmailEngineBundle\Template\Attachments;
 
-use SfCod\EmailEngineBundle\Template\OptionsInterface;
+use SfCod\EmailEngineBundle\Template\TemplateOptionsInterface;
 
 /**
  * Email attachment interface
@@ -16,9 +16,9 @@ interface AttachmentInterface
     /**
      * AttachmentInterface constructor.
      *
-     * @param OptionsInterface $options
+     * @param TemplateOptionsInterface $options
      */
-    public function __construct(OptionsInterface $options);
+    public function __construct(TemplateOptionsInterface $options);
 
     /**
      * Get attachment name

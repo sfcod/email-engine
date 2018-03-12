@@ -2,7 +2,7 @@
 
 namespace SfCod\EmailEngineBundle\Template\Params;
 
-use SfCod\EmailEngineBundle\Template\OptionsInterface;
+use SfCod\EmailEngineBundle\Template\TemplateOptionsInterface;
 
 /**
  * Template parameter interface
@@ -30,9 +30,9 @@ interface ParameterInterface
     /**
      * Get parameter value
      *
-     * @param OptionsInterface $options
+     * @param TemplateOptionsInterface $options
      *
      * @return mixed
      */
-    public function getValue(OptionsInterface $options);
+    public function getValue(TemplateOptionsInterface $options);
 }

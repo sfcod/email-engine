@@ -31,7 +31,7 @@ abstract class AbstractTemplate implements TemplateInterface, RepositoryAwareInt
     /**
      * Template options
      *
-     * @var OptionsInterface
+     * @var TemplateOptionsInterface
      */
     protected $options;
 
@@ -45,9 +45,9 @@ abstract class AbstractTemplate implements TemplateInterface, RepositoryAwareInt
     /**
      * AbstractTemplate constructor.
      *
-     * @param OptionsInterface $options
+     * @param TemplateOptionsInterface $options
      */
-    public function __construct(OptionsInterface $options)
+    public function __construct(TemplateOptionsInterface $options)
     {
         $this->options = $options;
     }

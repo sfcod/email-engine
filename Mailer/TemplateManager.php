@@ -26,11 +26,13 @@ class TemplateManager
     /**
      * TemplateManager constructor.
      *
-     * @param array $templates
+     * @param TemplateInterface[] $templates
      */
     public function __construct(array $templates)
     {
-        $this->templates = $templates;
+        foreach($templates as $template) {
+            $this->templates[$template::getSlug()] = $template;
+        }
     }
 
     /**

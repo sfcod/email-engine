@@ -2,7 +2,7 @@
 
 namespace SfCod\EmailEngineBundle\Template\Attachments;
 
-use SfCod\EmailEngineBundle\Template\OptionsInterface;
+use SfCod\EmailEngineBundle\Template\TemplateOptionsInterface;
 
 /**
  * Class AbstractAttachment
@@ -14,16 +14,16 @@ use SfCod\EmailEngineBundle\Template\OptionsInterface;
 abstract class AbstractAttachment implements AttachmentInterface
 {
     /**
-     * @var OptionsInterface
+     * @var TemplateOptionsInterface
      */
     protected $options;
 
     /**
      * AttachmentInterface constructor.
      *
-     * @param OptionsInterface $options
+     * @param TemplateOptionsInterface $options
      */
-    public function __construct(OptionsInterface $options)
+    public function __construct(TemplateOptionsInterface $options)
     {
         $this->options = $options;
     }

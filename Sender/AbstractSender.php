@@ -6,9 +6,7 @@ use Symfony\Component\DependencyInjection\ContainerAwareInterface;
 use Symfony\Component\DependencyInjection\ContainerAwareTrait;
 
 /**
- * Sender with repository access
- *
- * Class AbstractRepositorySender
+ * Class AbstractSender
  *
  * @author Virchenko Maksim <muslim1992@gmail.com>
  *
@@ -17,4 +15,17 @@ use Symfony\Component\DependencyInjection\ContainerAwareTrait;
 abstract class AbstractSender implements SenderInterface, ContainerAwareInterface
 {
     use ContainerAwareTrait;
+
+    /**
+     * @var MessageOptionsInterface|null
+     */
+    protected $options;
+
+    /**
+     * @param MessageOptionsInterface $options
+     */
+    public function setOptions(MessageOptionsInterface $options)
+    {
+        $this->options = $options;
+    }
 }

@@ -14,6 +14,15 @@ use SfCod\EmailEngineBundle\Template\TemplateInterface;
 interface SenderInterface
 {
     /**
+     * Set message options
+     *
+     * @param MessageOptionsInterface $options
+     *
+     * @return mixed
+     */
+    public function setOptions(MessageOptionsInterface $options);
+
+    /**
      * Send email to receiver
      *
      * @param TemplateInterface $template

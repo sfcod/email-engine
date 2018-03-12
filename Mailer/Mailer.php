@@ -4,6 +4,7 @@ namespace SfCod\EmailEngineBundle\Mailer;
 
 use SfCod\EmailEngineBundle\Exception\RepositoryUnavailableException;
 use SfCod\EmailEngineBundle\Repository\RepositoryInterface;
+use SfCod\EmailEngineBundle\Sender\MessageOptionsInterface;
 use SfCod\EmailEngineBundle\Sender\SenderInterface;
 use SfCod\EmailEngineBundle\Template\RepositoryAwareInterface;
 use SfCod\EmailEngineBundle\Template\TemplateInterface;
@@ -66,10 +67,11 @@ class Mailer
      *
      * @param TemplateInterface $template
      * @param array|string $emails
+     * @param null|MessageOptionsInterface $options
      *
      * @return int
      */
-    public function send(TemplateInterface $template, $emails): int
+    public function send(TemplateInterface $template, $emails, ?MessageOptionsInterface $options = null): int
     {
         $sentCount = 0;
 
@@ -81,7 +83,7 @@ class Mailer
             foreach ($this->senders as $config) {
                 try {
                     $concreteTemplate = clone $template;
-                    $concreteSender = $this->makeSender($config['sender']);
+                    $concreteSender = $this->makeSender(array_merge($config['sender'], ['options' => $options]));
 
                     if ($concreteTemplate instanceof ContainerAwareInterface) {
                         $concreteTemplate->setContainer($this->container);
@@ -120,6 +122,10 @@ class Mailer
     {
         /** @var SenderInterface $sender */
         $sender = new $config['class']();
+
+        if ($config['options']) {
+            $sender->setOptions($config['options']);
+        }
 
         if ($sender instanceof ContainerAwareInterface) {
             $sender->setContainer($this->container);

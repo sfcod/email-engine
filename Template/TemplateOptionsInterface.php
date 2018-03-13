@@ -9,6 +9,6 @@ namespace SfCod\EmailEngineBundle\Template;
  *
  * @package SfCod\EmailEngineBundle\Argument
  */
-interface OptionsInterface
+interface TemplateOptionsInterface
 {
 }

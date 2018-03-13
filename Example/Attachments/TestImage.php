@@ -2,7 +2,7 @@
 
 namespace SfCod\EmailEngineBundle\Example\Attachments;
 
-use SfCod\EmailEngineBundle\Example\TestOptions;
+use SfCod\EmailEngineBundle\Example\TestTemplateOptions;
 use SfCod\EmailEngineBundle\Template\Attachments\AbstractAttachment;
 
 /**
@@ -12,7 +12,7 @@ use SfCod\EmailEngineBundle\Template\Attachments\AbstractAttachment;
  *
  * @package SfCod\EmailEngineBundle\Example\Attachments
  *
- * @property TestOptions $options
+ * @property TestTemplateOptions $options
  */
 class TestImage extends AbstractAttachment
 {

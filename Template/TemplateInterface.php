@@ -29,9 +29,9 @@ interface TemplateInterface
     /**
      * TemplateInterface constructor.
      *
-     * @param OptionsInterface $options
+     * @param TemplateOptionsInterface $options
      */
-    public function __construct(OptionsInterface $options);
+    public function __construct(TemplateOptionsInterface $options);
 
     /**
      * Get template priority

@@ -2,8 +2,8 @@
 
 namespace SfCod\EmailEngineBundle\Example\Params;
 
-use SfCod\EmailEngineBundle\Example\TestOptions;
-use SfCod\EmailEngineBundle\Template\OptionsInterface;
+use SfCod\EmailEngineBundle\Example\TestTemplateOptions;
+use SfCod\EmailEngineBundle\Template\TemplateOptionsInterface;
 use SfCod\EmailEngineBundle\Template\Params\AbstractParameter;
 
 /**
@@ -28,11 +28,11 @@ class TestMessage extends AbstractParameter
     /**
      * Get parameter value
      *
-     * @param TestOptions|OptionsInterface $options
+     * @param TestTemplateOptions|TemplateOptionsInterface $options
      *
      * @return mixed
      */
-    public function getValue(OptionsInterface $options)
+    public function getValue(TemplateOptionsInterface $options)
     {
         return '<b>' . $options->message . '</b>';
     }

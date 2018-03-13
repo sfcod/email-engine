@@ -2,7 +2,7 @@
 
 namespace SfCod\EmailEngineBundle\Example;
 
-use SfCod\EmailEngineBundle\Template\OptionsInterface;
+use SfCod\EmailEngineBundle\Template\TemplateOptionsInterface;
 
 /**
  * Class TestArguments
@@ -11,7 +11,7 @@ use SfCod\EmailEngineBundle\Template\OptionsInterface;
  *
  * @package SfCod\EmailEngineBundle\Example
  */
-class TestOptions implements OptionsInterface
+class TestTemplateOptions implements TemplateOptionsInterface
 {
     /**
      * @var string

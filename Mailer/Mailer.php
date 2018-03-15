@@ -99,7 +99,7 @@ class Mailer
                         break;
                     }
                 } catch (RepositoryUnavailableException $e) {
-                    if ('dev' === $this->container->getParameter('kernel.environment')) {
+                    if ($this->container->get('kernel')->isDebug()) {
                         $this->container->get('logger')->error($e);
                     }
 

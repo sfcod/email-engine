@@ -23,13 +23,15 @@ sfcod_email_engine:
                 class: SfCod\EmailEngineBundle\Sender\SwiftMailerSender
             repository:
                 class: SfCod\EmailEngineBundle\Repository\DbRepository
-                arguments: { entity: Common\Shared\Entity\Email, attribute: slug }
+                arguments: { entity: <entity_class>, attribute: slug }
     templates:
         - SfCod\EmailEngineBundle\Example\TestTemplate
 ```
 
 Where "templates" section needed for "SfCod\EmailEngineBundle\Mailer\TemplateManager" service.
 Using which you can get all possible email template parameters, description, etc.
+
+And <entity_class> implements SfCod\EmailEngineBundle\Entity\EmailEntityInterface
 
 #### Usage:
 

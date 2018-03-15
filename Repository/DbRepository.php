@@ -2,7 +2,7 @@
 
 namespace SfCod\EmailEngineBundle\Repository;
 
-use Common\Shared\Entity\Email;
+use SfCod\EmailEngineBundle\Entity\EmailEntityInterface;
 use SfCod\EmailEngineBundle\Exception\RepositoryUnavailableException;
 use SfCod\EmailEngineBundle\Template\TemplateInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
@@ -17,7 +17,7 @@ use Symfony\Component\DependencyInjection\ContainerInterface;
 class DbRepository extends AbstractRepository
 {
     /**
-     * @var Email
+     * @var EmailEntityInterface
      */
     protected $email;
 

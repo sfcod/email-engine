@@ -26,9 +26,9 @@ interface SenderInterface
      * Send email to receiver
      *
      * @param TemplateInterface $template
-     * @param string $email
+     * @param array|string $emails
      *
      * @return bool
      */
-    public function send(TemplateInterface $template, string $email): bool;
+    public function send(TemplateInterface $template, $emails): bool;
 }

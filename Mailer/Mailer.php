@@ -75,36 +75,30 @@ class Mailer
     {
         $sentCount = 0;
 
-        foreach ((array)$emails as $email) {
-            if (!$email) {
-                continue;
-            }
+        foreach ($this->senders as $config) {
+            try {
+                $concreteTemplate = clone $template;
+                $concreteSender = $this->makeSender(array_merge($config['sender'], ['options' => $options]));
 
-            foreach ($this->senders as $config) {
-                try {
-                    $concreteTemplate = clone $template;
-                    $concreteSender = $this->makeSender(array_merge($config['sender'], ['options' => $options]));
-
-                    if ($concreteTemplate instanceof ContainerAwareInterface) {
-                        $concreteTemplate->setContainer($this->container);
-                    }
-
-                    if ($concreteTemplate instanceof RepositoryAwareInterface) {
-                        $concreteTemplate->setRepository($this->makeRepository($config['repository'], $concreteTemplate));
-                    }
-
-                    if ($concreteSender->send($concreteTemplate, $email)) {
-                        ++$sentCount;
-
-                        break;
-                    }
-                } catch (RepositoryUnavailableException $e) {
-                    if ($this->container->get('kernel')->isDebug()) {
-                        $this->container->get('logger')->error($e);
-                    }
-
-                    // Try next sender
+                if ($concreteTemplate instanceof ContainerAwareInterface) {
+                    $concreteTemplate->setContainer($this->container);
                 }
+
+                if ($concreteTemplate instanceof RepositoryAwareInterface) {
+                    $concreteTemplate->setRepository($this->makeRepository($config['repository'], $concreteTemplate));
+                }
+
+                if ($concreteSender->send($concreteTemplate, $emails)) {
+                    ++$sentCount;
+
+                    break;
+                }
+            } catch (RepositoryUnavailableException $e) {
+                if ($this->container->get('kernel')->isDebug()) {
+                    $this->container->get('logger')->error($e);
+                }
+
+                // Try next sender
             }
         }
 

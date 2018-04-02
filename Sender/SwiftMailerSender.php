@@ -20,16 +20,16 @@ class SwiftMailerSender extends AbstractSender
      * Send email to receiver
      *
      * @param TemplateInterface $template
-     * @param string $email
+     * @param array|string $emails
      *
      * @return bool
      */
-    public function send(TemplateInterface $template, string $email): bool
+    public function send(TemplateInterface $template, $emails): bool
     {
         $message = (new Swift_Message())
             ->setSubject($template->getSubject())
             ->setFrom($template->getSenderEmail())
-            ->setTo($email)
+            ->setTo($emails)
             ->setBody($template->getBody())
             ->setContentType('text/html');
 

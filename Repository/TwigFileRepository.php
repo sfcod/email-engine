@@ -86,7 +86,7 @@ class TwigFileRepository extends AbstractRepository
             return $this->renderBlock('sender_name', $data);
         }
 
-        return env('SENDER_NAME');
+        return getenv('SENDER_NAME');
     }
 
     /**
@@ -104,7 +104,7 @@ class TwigFileRepository extends AbstractRepository
             return $this->renderBlock('sender_email', $data);
         }
 
-        return env('SENDER_EMAIL');
+        return getenv('SENDER_EMAIL');
     }
 
     /**

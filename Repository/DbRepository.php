@@ -85,7 +85,7 @@ class DbRepository extends AbstractRepository
      */
     public function getSenderNameTemplate(array $data): string
     {
-        return env('SENDER_NAME');
+        return getenv('SENDER_NAME');
     }
 
     /**
@@ -97,7 +97,7 @@ class DbRepository extends AbstractRepository
      */
     public function getSenderEmailTemplate(array $data): string
     {
-        return env('SENDER_EMAIL');
+        return getenv('SENDER_EMAIL');
     }
 
     /**

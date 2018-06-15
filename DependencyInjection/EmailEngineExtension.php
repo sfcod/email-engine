@@ -6,6 +6,8 @@ use Psr\Log\LoggerInterface;
 use SfCod\EmailEngineBundle\Mailer\Mailer;
 use SfCod\EmailEngineBundle\Mailer\TemplateManager;
 use SfCod\EmailEngineBundle\Template\ParametersAwareInterface;
+use SfCod\EmailEngineBundle\Template\Params\ParameterResolver;
+use SfCod\EmailEngineBundle\Template\Params\ParameterResolverInterface;
 use SfCod\EmailEngineBundle\Template\TemplateInterface;
 use Symfony\Component\Config\Definition\Exception\InvalidConfigurationException;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
@@ -37,6 +39,8 @@ class EmailEngineExtension extends Extension
 
         $this->createSenders($config, $container);
         $this->createTemplates($config, $container);
+        $this->createResolver($config, $container);
+        $this->createRepositories($config, $container);
     }
 
     /**
@@ -47,6 +51,23 @@ class EmailEngineExtension extends Extension
     public function getAlias()
     {
         return 'sfcod_email_engine';
+    }
+
+    /**
+     * Create parameter resolver
+     *
+     * @param array $config
+     * @param ContainerBuilder $container
+     */
+    private function createResolver(array $config, ContainerBuilder $container)
+    {
+        $resolver = new Definition(ParameterResolverInterface::class);
+        $resolver->setClass(ParameterResolver::class);
+        $resolver->setArguments([
+            new Reference(ContainerInterface::class),
+        ]);
+
+        $container->setDefinition(ParameterResolverInterface::class, $resolver);
     }
 
     /**
@@ -72,13 +93,28 @@ class EmailEngineExtension extends Extension
             if (false === isset($config['sender'], $config['repository'])) {
                 throw  new InvalidConfigurationException(sprintf('"sender" and "repository" must be defined in "%s" sender.', $name));
             }
+
+            $sender = new Definition($config['sender']);
+            $sender->setPublic(true)
+                ->setAutoconfigured(true)
+                ->setAutowired(true);
+
+            $repository = new Definition($config['repository']);
+            $repository->setPublic(true)
+                ->setAutoconfigured(true)
+                ->setAutowired(true);
+
+            $container->addDefinitions([
+                $config['repository'] => $repository,
+                $config['sender'] => $sender,
+            ]);
         }
 
         $mailer = new Definition(Mailer::class);
         $mailer
             ->setPublic(true)
             ->setArguments([
-                new Reference(ContainerInterface::class),
+                new Reference(ParameterResolverInterface::class),
                 new Reference(LoggerInterface::class),
             ])
             ->addMethodCall('setSenders', [$senders]);

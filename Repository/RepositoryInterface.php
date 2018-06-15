@@ -15,13 +15,12 @@ use Symfony\Component\DependencyInjection\ContainerInterface;
 interface RepositoryInterface
 {
     /**
-     * RepositoryInterface constructor.
+     * Repository initialize
      *
-     * @param ContainerInterface $container
      * @param TemplateInterface $template
      * @param array $arguments
      */
-    public function __construct(ContainerInterface $container, TemplateInterface $template, array $arguments);
+    public function initialize(TemplateInterface $template, array $arguments = []);
 
     /**
      * Get subject template

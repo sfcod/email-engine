@@ -7,6 +7,8 @@ use SfCod\EmailEngineBundle\Exception\RepositoryUnavailableException;
 use SfCod\EmailEngineBundle\Repository\RepositoryInterface;
 use SfCod\EmailEngineBundle\Sender\MessageOptionsInterface;
 use SfCod\EmailEngineBundle\Sender\SenderInterface;
+use SfCod\EmailEngineBundle\Template\ParametersAwareInterface;
+use SfCod\EmailEngineBundle\Template\Params\ParameterResolverInterface;
 use SfCod\EmailEngineBundle\Template\RepositoryAwareInterface;
 use SfCod\EmailEngineBundle\Template\TemplateInterface;
 use Symfony\Component\DependencyInjection\ContainerAwareInterface;
@@ -34,20 +36,14 @@ class Mailer
     private $container;
 
     /**
-     * @var LoggerInterface
-     */
-    private $logger;
-
-    /**
      * EmailSender constructor.
      *
      * @param ContainerInterface $container
      * @param LoggerInterface $logger
      */
-    public function __construct(ContainerInterface $container, LoggerInterface $logger)
+    public function __construct(ContainerInterface $container)
     {
         $this->container = $container;
-        $this->logger = $logger;
     }
 
     /**
@@ -88,12 +84,12 @@ class Mailer
                 $concreteTemplate = clone $template;
                 $concreteSender = $this->makeSender(array_merge($config['sender'], ['options' => $options]));
 
-                if ($concreteTemplate instanceof ContainerAwareInterface) {
-                    $concreteTemplate->setContainer($this->container);
-                }
-
                 if ($concreteTemplate instanceof RepositoryAwareInterface) {
                     $concreteTemplate->setRepository($this->makeRepository($config['repository'], $concreteTemplate));
+                }
+
+                if ($concreteTemplate instanceof ParametersAwareInterface) {
+                    $concreteTemplate->setParameterResolver($this->container->get(ParameterResolverInterface::class));
                 }
 
                 if ($concreteSender->send($concreteTemplate, $emails)) {
@@ -103,7 +99,7 @@ class Mailer
                 }
             } catch (RepositoryUnavailableException $e) {
                 if ($this->container->get('kernel')->isDebug()) {
-                    $this->logger->error($e->getMessage(), ['exception' => $e]);
+                    $this->container->get(LoggerInterface::class)->error($e->getMessage(), ['exception' => $e]);
                 }
 
                 // Try next sender
@@ -123,14 +119,10 @@ class Mailer
     protected function makeSender(array $config): SenderInterface
     {
         /** @var SenderInterface $sender */
-        $sender = new $config['class']();
+        $sender = $this->container->get($config['class']);
 
         if ($config['options']) {
             $sender->setOptions($config['options']);
-        }
-
-        if ($sender instanceof ContainerAwareInterface) {
-            $sender->setContainer($this->container);
         }
 
         return $sender;
@@ -147,7 +139,8 @@ class Mailer
     protected function makeRepository(array $config, TemplateInterface $template): RepositoryInterface
     {
         /** @var RepositoryInterface $repository */
-        $repository = new $config['class']($this->container, $template, $config['arguments']);
+        $repository = $this->container->get($config['class']);
+        $repository->initialize($template, $config['arguments']);
 
         return $repository;
     }

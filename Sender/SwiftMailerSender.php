@@ -17,6 +17,21 @@ use Swift_Message;
 class SwiftMailerSender extends AbstractSender
 {
     /**
+     * @var Swift_Mailer
+     */
+    protected $mailer;
+
+    /**
+     * SwiftMailerSender constructor.
+     *
+     * @param Swift_Mailer $mailer
+     */
+    public function __construct(Swift_Mailer $mailer)
+    {
+        $this->mailer = $mailer;
+    }
+
+    /**
      * Send email to receiver
      *
      * @param TemplateInterface $template
@@ -43,6 +58,6 @@ class SwiftMailerSender extends AbstractSender
             }
         }
 
-        return (bool)$this->container->get('mailer')->send($message);
+        return (bool)$this->mailer->send($message);
     }
 }

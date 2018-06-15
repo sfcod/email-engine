@@ -28,7 +28,7 @@ sfcod_email_engine:
         - SfCod\EmailEngineBundle\Example\TestTemplate
 ```
 
-Where "templates" section needed for "SfCod\EmailEngineBundle\Mailer\TemplateManager" service.
+Where "templates" section needed for "SfCod\EmailEngineBundle\Mailer\TemplateManager" service and for params autowiring/autoconfiguring as services.
 Using which you can get all possible email template parameters, description, etc.
 
 And <entity_class> implements SfCod\EmailEngineBundle\Entity\EmailEntityInterface

@@ -14,7 +14,7 @@ use Symfony\Component\DependencyInjection\ContainerInterface;
  *
  * @package SfCod\EmailEngineBundle\Repository
  */
-class TwigFileRepository extends AbstractRepository
+class TwigFileRepository implements RepositoryInterface
 {
     /**
      * Twig template
@@ -24,23 +24,18 @@ class TwigFileRepository extends AbstractRepository
     protected $template;
 
     /**
-     * FileRepository constructor.
-     *
-     * @param ContainerInterface $container
-     * @param TemplateInterface $template
-     * @param array $arguments
-     *
-     * @throws RepositoryUnavailableException
-     * @throws \ReflectionException
+     * @var Twig
      */
-    public function __construct(ContainerInterface $container, TemplateInterface $template, array $arguments)
+    protected $twig;
+
+    /**
+     * TwigFileRepository constructor.
+     *
+     * @param Twig $twig
+     */
+    public function __construct(Twig $twig)
     {
-        parent::__construct($container, $template, $arguments);
-
-        $filePath = (new ReflectionClass(get_class($template)))->getFileName();
-        $directory = dirname($filePath) . DIRECTORY_SEPARATOR . 'Data';
-
-        $this->template = $this->loadTemplate($directory);
+        $this->twig = $twig;
     }
 
     /**
@@ -138,11 +133,26 @@ class TwigFileRepository extends AbstractRepository
     protected function loadTemplate(string $directory)
     {
         try {
-            return $this->container
-                ->get('twig')
-                ->load($directory . DIRECTORY_SEPARATOR . 'template.html.twig');
+            return $this->twig->load($directory . DIRECTORY_SEPARATOR . 'template.html.twig');
         } catch (\Throwable $e) {
             throw new RepositoryUnavailableException($e->getMessage());
         }
+    }
+
+    /**
+     * Repository initialize
+     *
+     * @param TemplateInterface $template
+     * @param array $arguments
+     *
+     * @throws RepositoryUnavailableException
+     * @throws \ReflectionException
+     */
+    public function initialize(TemplateInterface $template, array $arguments = [])
+    {
+        $filePath = (new ReflectionClass(get_class($template)))->getFileName();
+        $directory = dirname($filePath) . DIRECTORY_SEPARATOR . 'Data';
+
+        $this->template = $this->loadTemplate($directory);
     }
 }

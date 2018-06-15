@@ -171,11 +171,7 @@ abstract class AbstractTemplate implements TemplateInterface, RepositoryAwareInt
     {
         foreach (static::listParameters() as $parameterClass) {
             /** @var ParameterInterface $parameter */
-            $parameter = new $parameterClass();
-
-            if ($parameter instanceof ContainerAwareInterface) {
-                $parameter->setContainer($this->container);
-            }
+            $parameter = $this->container->get($parameterClass);
 
             $this->data[$parameterClass::getName()] = $parameter->getValue($this->options);
         }

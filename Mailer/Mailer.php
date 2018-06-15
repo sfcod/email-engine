@@ -2,6 +2,7 @@
 
 namespace SfCod\EmailEngineBundle\Mailer;
 
+use Psr\Log\LoggerInterface;
 use SfCod\EmailEngineBundle\Exception\RepositoryUnavailableException;
 use SfCod\EmailEngineBundle\Repository\RepositoryInterface;
 use SfCod\EmailEngineBundle\Sender\MessageOptionsInterface;
@@ -33,13 +34,20 @@ class Mailer
     private $container;
 
     /**
+     * @var LoggerInterface
+     */
+    private $logger;
+
+    /**
      * EmailSender constructor.
      *
      * @param ContainerInterface $container
+     * @param LoggerInterface $logger
      */
-    public function __construct(ContainerInterface $container)
+    public function __construct(ContainerInterface $container, LoggerInterface $logger)
     {
         $this->container = $container;
+        $this->logger = $logger;
     }
 
     /**
@@ -95,7 +103,7 @@ class Mailer
                 }
             } catch (RepositoryUnavailableException $e) {
                 if ($this->container->get('kernel')->isDebug()) {
-                    $this->container->get('logger')->error($e);
+                    $this->logger->error($e->getMessage(), ['exception' => $e]);
                 }
 
                 // Try next sender

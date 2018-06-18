@@ -5,13 +5,13 @@ namespace SfCod\EmailEngineBundle\Example;
 use SfCod\EmailEngineBundle\Template\TemplateOptionsInterface;
 
 /**
- * Class TestArguments
+ * Class TestEmailOptions
  *
  * @author Virchenko Maksim <muslim1992@gmail.com>
  *
  * @package SfCod\EmailEngineBundle\Example
  */
-class TestTemplateOptions implements TemplateOptionsInterface
+class TestEmailOptions implements TemplateOptionsInterface
 {
     /**
      * @var string

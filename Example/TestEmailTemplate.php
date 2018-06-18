@@ -8,13 +8,13 @@ use SfCod\EmailEngineBundle\Template\AbstractTemplate;
 use SfCod\EmailEngineBundle\Template\Params\ParameterInterface;
 
 /**
- * Class TestTemplate
+ * Class TestEmailTemplate
  *
  * @author Virchenko Maksim <muslim1992@gmail.com>
  *
  * @package SfCod\EmailEngineBundle\Example
  */
-class TestTemplate extends AbstractTemplate
+class TestEmailTemplate extends AbstractTemplate
 {
     /**
      * Get email template slug

@@ -33,6 +33,10 @@ class TestImage extends AbstractAttachment
      */
     public function getFileContent(): string
     {
-        return file_get_contents($this->options->filePath);
+        if (file_exists($this->options->filePath)) {
+            return file_get_contents($this->options->filePath);
+        }
+
+        return '';
     }
 }

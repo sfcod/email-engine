@@ -5,6 +5,7 @@ namespace SfCod\EmailEngineBundle\Repository;
 use ReflectionClass;
 use SfCod\EmailEngineBundle\Exception\RepositoryUnavailableException;
 use SfCod\EmailEngineBundle\Template\TemplateInterface;
+use SfCod\EmailEngineBundle\Template\TwigTemplateAwareInterface;
 use Twig_Environment;
 
 /**
@@ -122,31 +123,6 @@ class TwigFileRepository implements RepositoryInterface
     }
 
     /**
-     * Load template file
-     *
-     * @todo Remove hardcoded Data/template.html.twig path in 1.2
-     *
-     * @param string $directory
-     *
-     * @return \Twig_TemplateWrapper
-     *
-     * @throws RepositoryUnavailableException
-     */
-    protected function loadTemplate(string $directory)
-    {
-        try {
-            $this->twig->setLoader(new \Twig_Loader_Chain([
-                $this->twig->getLoader(),
-                new \Twig_Loader_Filesystem('Data', $directory),
-            ]));
-
-            return $this->twig->load('template.html.twig');
-        } catch (\Throwable $e) {
-            throw new RepositoryUnavailableException($e->getMessage());
-        }
-    }
-
-    /**
      * Repository initialize
      *
      * @param TemplateInterface $template
@@ -157,9 +133,29 @@ class TwigFileRepository implements RepositoryInterface
      */
     public function connect(TemplateInterface $template, array $arguments = [])
     {
-        $filePath = (new ReflectionClass(get_class($template)))->getFileName();
-        $directory = dirname($filePath);
+        if (false === $template instanceof TwigTemplateAwareInterface) {
+            throw new RepositoryUnavailableException('Template should implement TwigTemplateAwareInterface to work with TwigFileRepository.');
+        }
 
-        $this->template = $this->loadTemplate($directory);
+        try {
+            if (file_exists($template->getTwigTemplate())) {
+                $directory = dirname($template->getTwigTemplate());
+
+                $this->twig->setLoader(new \Twig_Loader_Chain([
+                    $this->twig->getLoader(),
+                    new \Twig_Loader_Filesystem(basename($directory), dirname($directory)),
+                ]));
+
+                $templateName = basename($template->getTwigTemplate());
+            } else {
+                $templateName = $template->getTwigTemplate();
+            }
+
+            $this->twig->setCache(false);
+
+            $this->template = $this->twig->load($templateName);
+        } catch (\Throwable $e) {
+            throw new RepositoryUnavailableException($e->getMessage());
+        }
     }
 }

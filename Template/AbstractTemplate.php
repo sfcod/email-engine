@@ -15,7 +15,7 @@ use SfCod\EmailEngineBundle\Template\Params\ParameterResolverInterface;
  *
  * @package SfCod\EmailEngineBundle\Template
  */
-abstract class AbstractTemplate implements TemplateInterface, RepositoryAwareInterface, ParametersAwareInterface, AttachmentsAwareInterface
+abstract class AbstractTemplate implements TemplateInterface, RepositoryAwareInterface, ParametersAwareInterface, AttachmentsAwareInterface, TwigTemplateAwareInterface
 {
     /**
      * Template data
@@ -175,6 +175,18 @@ abstract class AbstractTemplate implements TemplateInterface, RepositoryAwareInt
     public static function listAttachments(): array
     {
         return [];
+    }
+
+    /**
+     * Get twig template
+     *
+     * @return string
+     */
+    public function getTwigTemplate(): string
+    {
+        $filePath = (new \ReflectionClass(get_class($this)))->getFileName();
+
+        return sprintf('%s/Data/template.html.twig', dirname($filePath));
     }
 
     /**

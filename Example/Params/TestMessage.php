@@ -3,7 +3,7 @@
 namespace SfCod\EmailEngineBundle\Example\Params;
 
 use SfCod\EmailEngineBundle\Example\TestTemplateOptions;
-use SfCod\EmailEngineBundle\Template\Params\AbstractParameter;
+use SfCod\EmailEngineBundle\Template\Params\ParameterInterface;
 use SfCod\EmailEngineBundle\Template\TemplateOptionsInterface;
 
 /**
@@ -13,7 +13,7 @@ use SfCod\EmailEngineBundle\Template\TemplateOptionsInterface;
  *
  * @package SfCod\EmailEngineBundle\Example\Params
  */
-class TestMessage extends AbstractParameter
+class TestMessage implements ParameterInterface
 {
     /**
      * Get parameter name

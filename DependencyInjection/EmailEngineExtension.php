@@ -2,6 +2,7 @@
 
 namespace SfCod\EmailEngineBundle\DependencyInjection;
 
+use Psr\Log\LoggerInterface;
 use SfCod\EmailEngineBundle\Mailer\Mailer;
 use SfCod\EmailEngineBundle\Mailer\TemplateManager;
 use SfCod\EmailEngineBundle\Template\ParametersAwareInterface;
@@ -116,6 +117,7 @@ class EmailEngineExtension extends Extension
             ->setPublic(true)
             ->setArguments([
                 new Reference(ContainerInterface::class),
+                new Reference(LoggerInterface::class),
             ])
             ->addMethodCall('setSenders', [$senders]);
 

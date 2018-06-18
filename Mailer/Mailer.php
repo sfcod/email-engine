@@ -35,14 +35,20 @@ class Mailer
     private $container;
 
     /**
+     * @var LoggerInterface
+     */
+    private $logger;
+
+    /**
      * EmailSender constructor.
      *
      * @param ContainerInterface $container
      * @param LoggerInterface $logger
      */
-    public function __construct(ContainerInterface $container)
+    public function __construct(ContainerInterface $container, LoggerInterface $logger)
     {
         $this->container = $container;
+        $this->logger = $logger;
     }
 
     /**
@@ -79,31 +85,31 @@ class Mailer
         $sentCount = 0;
 
         foreach ($this->senders as $config) {
-//            try {
-            $concreteTemplate = clone $template;
-            $sender = array_merge($config['sender'], ['options' => $options]);
-            $concreteSender = $this->makeSender($sender['class'], $sender['options'] ?? []);
+            try {
+                $concreteTemplate = clone $template;
+                $sender = array_merge($config['sender'], ['options' => $options]);
+                $concreteSender = $this->makeSender($sender['class'], $sender['options'] ?? []);
 
-            if ($concreteTemplate instanceof RepositoryAwareInterface) {
-                $concreteTemplate->setRepository($this->makeRepository($config['repository']['class'], $concreteTemplate, $config['repository']['arguments']));
+                if ($concreteTemplate instanceof RepositoryAwareInterface) {
+                    $concreteTemplate->setRepository($this->makeRepository($config['repository']['class'], $concreteTemplate, $config['repository']['arguments']));
+                }
+
+                if ($concreteTemplate instanceof ParametersAwareInterface) {
+                    $concreteTemplate->setParameterResolver($this->container->get(ParameterResolverInterface::class));
+                }
+
+                if ($concreteSender->send($concreteTemplate, $emails)) {
+                    ++$sentCount;
+
+                    break;
+                }
+            } catch (RepositoryUnavailableException $e) {
+                if ($this->container->get('kernel')->isDebug()) {
+                    $this->logger->error($e->getMessage(), ['exception' => $e]);
+                }
+
+                // Try next sender
             }
-
-            if ($concreteTemplate instanceof ParametersAwareInterface) {
-                $concreteTemplate->setParameterResolver($this->container->get(ParameterResolverInterface::class));
-            }
-
-            if ($concreteSender->send($concreteTemplate, $emails)) {
-                ++$sentCount;
-
-                break;
-            }
-//            } catch (RepositoryUnavailableException $e) {
-//                if ($this->container->get('kernel')->isDebug()) {
-//                    $this->container->get(LoggerInterface::class)->error($e->getMessage(), ['exception' => $e]);
-//                }
-//
-//                // Try next sender
-//            }
         }
 
         return $sentCount;

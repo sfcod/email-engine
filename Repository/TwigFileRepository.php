@@ -124,6 +124,8 @@ class TwigFileRepository implements RepositoryInterface
     /**
      * Load template file
      *
+     * @todo Remove hardcoded Data/template.html.twig path in 1.2
+     *
      * @param string $directory
      *
      * @return \Twig_TemplateWrapper

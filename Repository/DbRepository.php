@@ -2,6 +2,7 @@
 
 namespace SfCod\EmailEngineBundle\Repository;
 
+use Doctrine\ORM\EntityManagerInterface;
 use SfCod\EmailEngineBundle\Entity\EmailEntityInterface;
 use SfCod\EmailEngineBundle\Exception\RepositoryUnavailableException;
 use SfCod\EmailEngineBundle\Template\TemplateInterface;

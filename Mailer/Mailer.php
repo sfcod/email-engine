@@ -2,13 +2,15 @@
 
 namespace SfCod\EmailEngineBundle\Mailer;
 
+use Psr\Log\LoggerInterface;
 use SfCod\EmailEngineBundle\Exception\RepositoryUnavailableException;
 use SfCod\EmailEngineBundle\Repository\RepositoryInterface;
 use SfCod\EmailEngineBundle\Sender\MessageOptionsInterface;
 use SfCod\EmailEngineBundle\Sender\SenderInterface;
+use SfCod\EmailEngineBundle\Template\ParametersAwareInterface;
+use SfCod\EmailEngineBundle\Template\Params\ParameterResolverInterface;
 use SfCod\EmailEngineBundle\Template\RepositoryAwareInterface;
 use SfCod\EmailEngineBundle\Template\TemplateInterface;
-use Symfony\Component\DependencyInjection\ContainerAwareInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
 /**
@@ -36,6 +38,7 @@ class Mailer
      * EmailSender constructor.
      *
      * @param ContainerInterface $container
+     * @param LoggerInterface $logger
      */
     public function __construct(ContainerInterface $container)
     {
@@ -76,30 +79,31 @@ class Mailer
         $sentCount = 0;
 
         foreach ($this->senders as $config) {
-            try {
-                $concreteTemplate = clone $template;
-                $concreteSender = $this->makeSender(array_merge($config['sender'], ['options' => $options]));
+//            try {
+            $concreteTemplate = clone $template;
+            $sender = array_merge($config['sender'], ['options' => $options]);
+            $concreteSender = $this->makeSender($sender['class'], $sender['options'] ?? []);
 
-                if ($concreteTemplate instanceof ContainerAwareInterface) {
-                    $concreteTemplate->setContainer($this->container);
-                }
-
-                if ($concreteTemplate instanceof RepositoryAwareInterface) {
-                    $concreteTemplate->setRepository($this->makeRepository($config['repository'], $concreteTemplate));
-                }
-
-                if ($concreteSender->send($concreteTemplate, $emails)) {
-                    ++$sentCount;
-
-                    break;
-                }
-            } catch (RepositoryUnavailableException $e) {
-                if ($this->container->get('kernel')->isDebug()) {
-                    $this->container->get('logger')->error($e);
-                }
-
-                // Try next sender
+            if ($concreteTemplate instanceof RepositoryAwareInterface) {
+                $concreteTemplate->setRepository($this->makeRepository($config['repository']['class'], $concreteTemplate, $config['repository']['arguments']));
             }
+
+            if ($concreteTemplate instanceof ParametersAwareInterface) {
+                $concreteTemplate->setParameterResolver($this->container->get(ParameterResolverInterface::class));
+            }
+
+            if ($concreteSender->send($concreteTemplate, $emails)) {
+                ++$sentCount;
+
+                break;
+            }
+//            } catch (RepositoryUnavailableException $e) {
+//                if ($this->container->get('kernel')->isDebug()) {
+//                    $this->container->get(LoggerInterface::class)->error($e->getMessage(), ['exception' => $e]);
+//                }
+//
+//                // Try next sender
+//            }
         }
 
         return $sentCount;
@@ -108,21 +112,18 @@ class Mailer
     /**
      * Make email engine sender
      *
-     * @param array $config
+     * @param string $sender
+     * @param array $options
      *
      * @return SenderInterface
      */
-    protected function makeSender(array $config): SenderInterface
+    protected function makeSender(string $sender, array $options = []): SenderInterface
     {
         /** @var SenderInterface $sender */
-        $sender = new $config['class']();
+        $sender = $this->container->get($sender);
 
-        if ($config['options']) {
-            $sender->setOptions($config['options']);
-        }
-
-        if ($sender instanceof ContainerAwareInterface) {
-            $sender->setContainer($this->container);
+        if (false === empty($options)) {
+            $sender->setOptions($options);
         }
 
         return $sender;
@@ -131,15 +132,17 @@ class Mailer
     /**
      * Make email engine repository
      *
-     * @param array $config
+     * @param string $repository
      * @param TemplateInterface $template
+     * @param array $arguments
      *
      * @return RepositoryInterface
      */
-    protected function makeRepository(array $config, TemplateInterface $template): RepositoryInterface
+    protected function makeRepository(string $repository, TemplateInterface $template, array $arguments = []): RepositoryInterface
     {
         /** @var RepositoryInterface $repository */
-        $repository = new $config['class']($this->container, $template, $config['arguments']);
+        $repository = $this->container->get($repository);
+        $repository->connect($template, $arguments);
 
         return $repository;
     }

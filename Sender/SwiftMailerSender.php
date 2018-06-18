@@ -5,6 +5,7 @@ namespace SfCod\EmailEngineBundle\Sender;
 use SfCod\EmailEngineBundle\Template\AttachmentsAwareInterface;
 use SfCod\EmailEngineBundle\Template\TemplateInterface;
 use Swift_Attachment;
+use Swift_Mailer;
 use Swift_Message;
 
 /**
@@ -16,6 +17,21 @@ use Swift_Message;
  */
 class SwiftMailerSender extends AbstractSender
 {
+    /**
+     * @var Swift_Mailer
+     */
+    protected $mailer;
+
+    /**
+     * SwiftMailerSender constructor.
+     *
+     * @param Swift_Mailer $mailer
+     */
+    public function __construct(Swift_Mailer $mailer)
+    {
+        $this->mailer = $mailer;
+    }
+
     /**
      * Send email to receiver
      *
@@ -32,7 +48,7 @@ class SwiftMailerSender extends AbstractSender
             ->setTo($emails)
             ->setBody($template->getBody())
             ->setContentType('text/html');
-
+        dd($message);
         if ($template instanceof AttachmentsAwareInterface) {
             foreach ($template->getAttachments() as $templateAttachment) {
                 $attachment = (new Swift_Attachment())
@@ -43,6 +59,6 @@ class SwiftMailerSender extends AbstractSender
             }
         }
 
-        return (bool)$this->container->get('mailer')->send($message);
+        return (bool)$this->mailer->send($message);
     }
 }

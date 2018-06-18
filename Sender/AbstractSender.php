@@ -2,9 +2,6 @@
 
 namespace SfCod\EmailEngineBundle\Sender;
 
-use Symfony\Component\DependencyInjection\ContainerAwareInterface;
-use Symfony\Component\DependencyInjection\ContainerAwareTrait;
-
 /**
  * Class AbstractSender
  *
@@ -12,10 +9,8 @@ use Symfony\Component\DependencyInjection\ContainerAwareTrait;
  *
  * @package SfCod\EmailEngineBundle\Sender
  */
-abstract class AbstractSender implements SenderInterface, ContainerAwareInterface
+abstract class AbstractSender implements SenderInterface
 {
-    use ContainerAwareTrait;
-
     /**
      * @var MessageOptionsInterface|null
      */

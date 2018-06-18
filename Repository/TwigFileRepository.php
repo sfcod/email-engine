@@ -5,7 +5,7 @@ namespace SfCod\EmailEngineBundle\Repository;
 use ReflectionClass;
 use SfCod\EmailEngineBundle\Exception\RepositoryUnavailableException;
 use SfCod\EmailEngineBundle\Template\TemplateInterface;
-use Symfony\Component\DependencyInjection\ContainerInterface;
+use Twig_Environment;
 
 /**
  * Class TwigFileRepository
@@ -14,7 +14,7 @@ use Symfony\Component\DependencyInjection\ContainerInterface;
  *
  * @package SfCod\EmailEngineBundle\Repository
  */
-class TwigFileRepository extends AbstractRepository
+class TwigFileRepository implements RepositoryInterface
 {
     /**
      * Twig template
@@ -24,23 +24,18 @@ class TwigFileRepository extends AbstractRepository
     protected $template;
 
     /**
-     * FileRepository constructor.
-     *
-     * @param ContainerInterface $container
-     * @param TemplateInterface $template
-     * @param array $arguments
-     *
-     * @throws RepositoryUnavailableException
-     * @throws \ReflectionException
+     * @var Twig_Environment
      */
-    public function __construct(ContainerInterface $container, TemplateInterface $template, array $arguments)
+    protected $twig;
+
+    /**
+     * TwigFileRepository constructor.
+     *
+     * @param Twig_Environment $twig
+     */
+    public function __construct(Twig_Environment $twig)
     {
-        parent::__construct($container, $template, $arguments);
-
-        $filePath = (new ReflectionClass(get_class($template)))->getFileName();
-        $directory = dirname($filePath) . DIRECTORY_SEPARATOR . 'Data';
-
-        $this->template = $this->loadTemplate($directory);
+        $this->twig = $twig;
     }
 
     /**
@@ -138,11 +133,31 @@ class TwigFileRepository extends AbstractRepository
     protected function loadTemplate(string $directory)
     {
         try {
-            return $this->container
-                ->get('twig')
-                ->load($directory . DIRECTORY_SEPARATOR . 'template.html.twig');
+            $this->twig->setLoader(new \Twig_Loader_Chain([
+                $this->twig->getLoader(),
+                new \Twig_Loader_Filesystem('Data', $directory),
+            ]));
+
+            return $this->twig->load('template.html.twig');
         } catch (\Throwable $e) {
             throw new RepositoryUnavailableException($e->getMessage());
         }
+    }
+
+    /**
+     * Repository initialize
+     *
+     * @param TemplateInterface $template
+     * @param array $arguments
+     *
+     * @throws RepositoryUnavailableException
+     * @throws \ReflectionException
+     */
+    public function connect(TemplateInterface $template, array $arguments = [])
+    {
+        $filePath = (new ReflectionClass(get_class($template)))->getFileName();
+        $directory = dirname($filePath);
+
+        $this->template = $this->loadTemplate($directory);
     }
 }

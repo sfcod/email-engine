@@ -5,7 +5,7 @@ namespace SfCod\EmailEngineBundle\Repository;
 use SfCod\EmailEngineBundle\Entity\EmailEntityInterface;
 use SfCod\EmailEngineBundle\Exception\RepositoryUnavailableException;
 use SfCod\EmailEngineBundle\Template\TemplateInterface;
-use Symfony\Component\DependencyInjection\ContainerInterface;
+use Twig_Environment;
 
 /**
  * Class DbRepository
@@ -14,7 +14,7 @@ use Symfony\Component\DependencyInjection\ContainerInterface;
  *
  * @package SfCod\EmailEngineBundle\Repository
  */
-class DbRepository extends AbstractRepository
+class DbRepository implements RepositoryInterface
 {
     /**
      * @var EmailEntityInterface
@@ -22,24 +22,41 @@ class DbRepository extends AbstractRepository
     protected $email;
 
     /**
-     * RepositoryInterface constructor.
+     * @var EntityManagerInterface
+     */
+    protected $em;
+
+    /**
+     * @var Twig_Environment
+     */
+    protected $twig;
+
+    /**
+     * DbRepository constructor.
      *
-     * @param ContainerInterface $container
+     * @param EntityManagerInterface $em
+     */
+    public function __construct(EntityManagerInterface $em, Twig_Environment $twig)
+    {
+        $this->em = $em;
+        $this->twig = $twig;
+    }
+
+    /**
+     * Repository initialize
+     *
      * @param TemplateInterface $template
      * @param array $arguments
      *
      * @throws RepositoryUnavailableException
      */
-    public function __construct(ContainerInterface $container, TemplateInterface $template, array $arguments)
+    public function connect(TemplateInterface $template, array $arguments = [])
     {
-        parent::__construct($container, $template, $arguments);
-
         if (false === isset($arguments['entity'], $arguments['attribute'])) {
             throw new RepositoryUnavailableException('DbRepository configuration incorrect, "entity" and "attribute" must be configured.');
         }
 
-        $this->email = $container->get('doctrine')
-            ->getManager()
+        $this->email = $this->em
             ->getRepository($arguments['entity'])
             ->findOneBy([$arguments['attribute'] => get_class($template)::getSlug()]);
 
@@ -113,7 +130,7 @@ class DbRepository extends AbstractRepository
     protected function applyArguments(string $str, array $args): string
     {
         try {
-            return $this->container->get('twig')
+            return $this->twig
                 ->createTemplate('{% autoescape false %}' . $str . '{% endautoescape %}')
                 ->render($args);
         } catch (\Throwable $e) {

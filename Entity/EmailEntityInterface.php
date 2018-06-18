@@ -4,6 +4,7 @@ namespace SfCod\EmailEngineBundle\Entity;
 
 /**
  * Interface EmailEntityInterface
+ *
  * @package SfCod\EmailEngineBundle\Entity
  */
 interface EmailEntityInterface

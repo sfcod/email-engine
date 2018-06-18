@@ -4,9 +4,7 @@ namespace SfCod\EmailEngineBundle\Template;
 
 use SfCod\EmailEngineBundle\Repository\RepositoryInterface;
 use SfCod\EmailEngineBundle\Template\Attachments\AttachmentInterface;
-use SfCod\EmailEngineBundle\Template\Params\ParameterInterface;
-use Symfony\Component\DependencyInjection\ContainerAwareInterface;
-use Symfony\Component\DependencyInjection\ContainerAwareTrait;
+use SfCod\EmailEngineBundle\Template\Params\ParameterResolverInterface;
 
 /**
  * Abstract argumentative, repository aware template
@@ -17,10 +15,8 @@ use Symfony\Component\DependencyInjection\ContainerAwareTrait;
  *
  * @package SfCod\EmailEngineBundle\Template
  */
-abstract class AbstractTemplate implements TemplateInterface, RepositoryAwareInterface, ContainerAwareInterface, ParametersAwareInterface, AttachmentsAwareInterface
+abstract class AbstractTemplate implements TemplateInterface, RepositoryAwareInterface, ParametersAwareInterface, AttachmentsAwareInterface
 {
-    use ContainerAwareTrait;
-
     /**
      * Template data
      *
@@ -43,6 +39,13 @@ abstract class AbstractTemplate implements TemplateInterface, RepositoryAwareInt
     protected $repository;
 
     /**
+     * Parameter resolver
+     *
+     * @var ParameterResolverInterface
+     */
+    protected $parameterResolver;
+
+    /**
      * AbstractTemplate constructor.
      *
      * @param TemplateOptionsInterface $options
@@ -50,6 +53,18 @@ abstract class AbstractTemplate implements TemplateInterface, RepositoryAwareInt
     public function __construct(TemplateOptionsInterface $options)
     {
         $this->options = $options;
+    }
+
+    /**
+     * Set parameter resolver
+     *
+     * @param ParameterResolverInterface $parameterResolver
+     *
+     * @return mixed|void
+     */
+    public function setParameterResolver(ParameterResolverInterface $parameterResolver)
+    {
+        $this->parameterResolver = $parameterResolver;
     }
 
     /**
@@ -169,15 +184,10 @@ abstract class AbstractTemplate implements TemplateInterface, RepositoryAwareInt
      */
     protected function getData(): array
     {
-        foreach (static::listParameters() as $parameterClass) {
-            /** @var ParameterInterface $parameter */
-            $parameter = new $parameterClass();
-
-            if ($parameter instanceof ContainerAwareInterface) {
-                $parameter->setContainer($this->container);
+        if (empty($this->data)) {
+            foreach (static::listParameters() as $parameterClass) {
+                $this->data[$parameterClass::getName()] = $this->parameterResolver->getParameterValue($parameterClass, $this->options);
             }
-
-            $this->data[$parameterClass::getName()] = $parameter->getValue($this->options);
         }
 
         return $this->data;

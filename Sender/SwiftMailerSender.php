@@ -48,7 +48,7 @@ class SwiftMailerSender extends AbstractSender
             ->setTo($emails)
             ->setBody($template->getBody())
             ->setContentType('text/html');
-        dd($message);
+
         if ($template instanceof AttachmentsAwareInterface) {
             foreach ($template->getAttachments() as $templateAttachment) {
                 $attachment = (new Swift_Attachment())

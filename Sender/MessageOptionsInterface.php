@@ -10,5 +10,4 @@ namespace SfCod\EmailEngineBundle\Sender;
  */
 interface MessageOptionsInterface
 {
-
 }

@@ -3,8 +3,8 @@
 namespace SfCod\EmailEngineBundle\Example\Params;
 
 use SfCod\EmailEngineBundle\Example\TestTemplateOptions;
-use SfCod\EmailEngineBundle\Template\TemplateOptionsInterface;
 use SfCod\EmailEngineBundle\Template\Params\AbstractParameter;
+use SfCod\EmailEngineBundle\Template\TemplateOptionsInterface;
 
 /**
  * Class TestMessage

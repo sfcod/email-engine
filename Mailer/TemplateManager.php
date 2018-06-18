@@ -30,7 +30,7 @@ class TemplateManager
      */
     public function __construct(array $templates)
     {
-        foreach($templates as $template) {
+        foreach ($templates as $template) {
             $this->templates[$template::getSlug()] = $template;
         }
     }

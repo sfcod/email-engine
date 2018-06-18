@@ -3,7 +3,6 @@
 namespace SfCod\EmailEngineBundle\Repository;
 
 use SfCod\EmailEngineBundle\Template\TemplateInterface;
-use Symfony\Component\DependencyInjection\ContainerInterface;
 
 /**
  * Email engine repository interface
@@ -15,12 +14,12 @@ use Symfony\Component\DependencyInjection\ContainerInterface;
 interface RepositoryInterface
 {
     /**
-     * Repository initialize
+     * Connect to repository
      *
      * @param TemplateInterface $template
      * @param array $arguments
      */
-    public function initialize(TemplateInterface $template, array $arguments = []);
+    public function connect(TemplateInterface $template, array $arguments = []);
 
     /**
      * Get subject template

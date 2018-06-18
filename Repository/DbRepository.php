@@ -5,7 +5,7 @@ namespace SfCod\EmailEngineBundle\Repository;
 use SfCod\EmailEngineBundle\Entity\EmailEntityInterface;
 use SfCod\EmailEngineBundle\Exception\RepositoryUnavailableException;
 use SfCod\EmailEngineBundle\Template\TemplateInterface;
-use Symfony\Component\DependencyInjection\ContainerInterface;
+use Twig_Environment;
 
 /**
  * Class DbRepository
@@ -27,7 +27,7 @@ class DbRepository implements RepositoryInterface
     protected $em;
 
     /**
-     * @var Twig
+     * @var Twig_Environment
      */
     protected $twig;
 
@@ -36,7 +36,7 @@ class DbRepository implements RepositoryInterface
      *
      * @param EntityManagerInterface $em
      */
-    public function __construct(EntityManagerInterface $em, Twig $twig)
+    public function __construct(EntityManagerInterface $em, Twig_Environment $twig)
     {
         $this->em = $em;
         $this->twig = $twig;
@@ -50,7 +50,7 @@ class DbRepository implements RepositoryInterface
      *
      * @throws RepositoryUnavailableException
      */
-    public function initialize(TemplateInterface $template, array $arguments = [])
+    public function connect(TemplateInterface $template, array $arguments = [])
     {
         if (false === isset($arguments['entity'], $arguments['attribute'])) {
             throw new RepositoryUnavailableException('DbRepository configuration incorrect, "entity" and "attribute" must be configured.');

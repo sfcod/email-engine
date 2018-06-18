@@ -2,19 +2,22 @@
 
 namespace SfCod\EmailEngineBundle\Template\Params;
 
+use SfCod\EmailEngineBundle\Template\TemplateOptionsInterface;
+
 /**
  * Interface ParameterResolverInterface
+ *
  * @package SfCod\EmailEngineBundle\Template\Params
  */
 interface ParameterResolverInterface
 {
     /**
-     * Get parameter
+     * Get parameter's value
      *
      * @param string $name
-     * @param array $options
+     * @param TemplateOptionsInterface $options
      *
      * @return mixed
      */
-    public function getParameter(string $name, array $options = []);
+    public function getParameterValue(string $name, TemplateOptionsInterface $options);
 }

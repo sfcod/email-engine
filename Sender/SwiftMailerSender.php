@@ -5,6 +5,7 @@ namespace SfCod\EmailEngineBundle\Sender;
 use SfCod\EmailEngineBundle\Template\AttachmentsAwareInterface;
 use SfCod\EmailEngineBundle\Template\TemplateInterface;
 use Swift_Attachment;
+use Swift_Mailer;
 use Swift_Message;
 
 /**
@@ -47,7 +48,7 @@ class SwiftMailerSender extends AbstractSender
             ->setTo($emails)
             ->setBody($template->getBody())
             ->setContentType('text/html');
-
+        dd($message);
         if ($template instanceof AttachmentsAwareInterface) {
             foreach ($template->getAttachments() as $templateAttachment) {
                 $attachment = (new Swift_Attachment())

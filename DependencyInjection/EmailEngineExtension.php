@@ -2,13 +2,11 @@
 
 namespace SfCod\EmailEngineBundle\DependencyInjection;
 
-use Psr\Log\LoggerInterface;
 use SfCod\EmailEngineBundle\Mailer\Mailer;
 use SfCod\EmailEngineBundle\Mailer\TemplateManager;
 use SfCod\EmailEngineBundle\Template\ParametersAwareInterface;
 use SfCod\EmailEngineBundle\Template\Params\ParameterResolver;
 use SfCod\EmailEngineBundle\Template\Params\ParameterResolverInterface;
-use SfCod\EmailEngineBundle\Template\TemplateInterface;
 use Symfony\Component\Config\Definition\Exception\InvalidConfigurationException;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\DependencyInjection\ContainerInterface;
@@ -40,7 +38,6 @@ class EmailEngineExtension extends Extension
         $this->createSenders($config, $container);
         $this->createTemplates($config, $container);
         $this->createResolver($config, $container);
-        $this->createRepositories($config, $container);
     }
 
     /**
@@ -62,6 +59,7 @@ class EmailEngineExtension extends Extension
     private function createResolver(array $config, ContainerBuilder $container)
     {
         $resolver = new Definition(ParameterResolverInterface::class);
+        $resolver->setPublic(true);
         $resolver->setClass(ParameterResolver::class);
         $resolver->setArguments([
             new Reference(ContainerInterface::class),
@@ -90,23 +88,26 @@ class EmailEngineExtension extends Extension
         }
 
         foreach ($senders as $name => $config) {
-            if (false === isset($config['sender'], $config['repository'])) {
+            if (false === isset($config['sender'], $config['repository']) ||
+                false === isset($config['sender']['class'], $config['repository']['class'])) {
                 throw  new InvalidConfigurationException(sprintf('"sender" and "repository" must be defined in "%s" sender.', $name));
             }
 
-            $sender = new Definition($config['sender']);
-            $sender->setPublic(true)
+            $sender = new Definition($config['sender']['class']);
+            $sender
+                ->setPublic(true)
                 ->setAutoconfigured(true)
                 ->setAutowired(true);
 
-            $repository = new Definition($config['repository']);
-            $repository->setPublic(true)
+            $repository = new Definition($config['repository']['class']);
+            $repository
+                ->setPublic(true)
                 ->setAutoconfigured(true)
                 ->setAutowired(true);
 
             $container->addDefinitions([
-                $config['repository'] => $repository,
-                $config['sender'] => $sender,
+                $config['repository']['class'] => $repository,
+                $config['sender']['class'] => $sender,
             ]);
         }
 
@@ -114,8 +115,7 @@ class EmailEngineExtension extends Extension
         $mailer
             ->setPublic(true)
             ->setArguments([
-                new Reference(ParameterResolverInterface::class),
-                new Reference(LoggerInterface::class),
+                new Reference(ContainerInterface::class),
             ])
             ->addMethodCall('setSenders', [$senders]);
 

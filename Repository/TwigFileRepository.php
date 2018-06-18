@@ -5,7 +5,7 @@ namespace SfCod\EmailEngineBundle\Repository;
 use ReflectionClass;
 use SfCod\EmailEngineBundle\Exception\RepositoryUnavailableException;
 use SfCod\EmailEngineBundle\Template\TemplateInterface;
-use Symfony\Component\DependencyInjection\ContainerInterface;
+use Twig_Environment;
 
 /**
  * Class TwigFileRepository
@@ -24,16 +24,16 @@ class TwigFileRepository implements RepositoryInterface
     protected $template;
 
     /**
-     * @var Twig
+     * @var Twig_Environment
      */
     protected $twig;
 
     /**
      * TwigFileRepository constructor.
      *
-     * @param Twig $twig
+     * @param Twig_Environment $twig
      */
-    public function __construct(Twig $twig)
+    public function __construct(Twig_Environment $twig)
     {
         $this->twig = $twig;
     }
@@ -133,7 +133,12 @@ class TwigFileRepository implements RepositoryInterface
     protected function loadTemplate(string $directory)
     {
         try {
-            return $this->twig->load($directory . DIRECTORY_SEPARATOR . 'template.html.twig');
+            $this->twig->setLoader(new \Twig_Loader_Chain([
+                $this->twig->getLoader(),
+                new \Twig_Loader_Filesystem('Data', $directory),
+            ]));
+
+            return $this->twig->load('template.html.twig');
         } catch (\Throwable $e) {
             throw new RepositoryUnavailableException($e->getMessage());
         }
@@ -148,10 +153,10 @@ class TwigFileRepository implements RepositoryInterface
      * @throws RepositoryUnavailableException
      * @throws \ReflectionException
      */
-    public function initialize(TemplateInterface $template, array $arguments = [])
+    public function connect(TemplateInterface $template, array $arguments = [])
     {
         $filePath = (new ReflectionClass(get_class($template)))->getFileName();
-        $directory = dirname($filePath) . DIRECTORY_SEPARATOR . 'Data';
+        $directory = dirname($filePath);
 
         $this->template = $this->loadTemplate($directory);
     }

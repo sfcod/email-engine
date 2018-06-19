@@ -88,7 +88,7 @@ class Mailer
             try {
                 $concreteTemplate = clone $template;
                 $sender = array_merge($config['sender'], ['options' => $options]);
-                $concreteSender = $this->makeSender($sender['class'], $sender['options'] ?? []);
+                $concreteSender = $this->makeSender($sender['class'], $sender['options']);
 
                 if ($concreteTemplate instanceof RepositoryAwareInterface) {
                     $concreteTemplate->setRepository($this->makeRepository($config['repository']['class'], $concreteTemplate, $config['repository']['arguments']));
@@ -119,16 +119,16 @@ class Mailer
      * Make email engine sender
      *
      * @param string $sender
-     * @param array $options
+     * @param MessageOptionsInterface|null $options
      *
      * @return SenderInterface
      */
-    protected function makeSender(string $sender, array $options = []): SenderInterface
+    protected function makeSender(string $sender, ?MessageOptionsInterface $options = null): SenderInterface
     {
         /** @var SenderInterface $sender */
         $sender = $this->container->get($sender);
 
-        if (false === empty($options)) {
+        if ($options) {
             $sender->setOptions($options);
         }
 

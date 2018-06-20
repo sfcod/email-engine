@@ -47,5 +47,8 @@ public function indexAction(Mailer $mailer) {
 }
 ```
 
+If you want to use SfCod\EmailEngineBundle\Sender\SwiftMailerSender with SfCod\EmailEngineBundle\Repository\TwigFileRepository
+then you have to implement SfCod\EmailEngineBundle\Template\TwigTemplateAwareInterface.
+
 And TestTemplate email will be sent using SwiftMailerSender and template data will be collected from DbRepository.
 If it fails, will be used SwiftMailerSender+TwigFileRepository, because both of them listed in "chained_sender" (see config section).

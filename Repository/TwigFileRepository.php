@@ -2,7 +2,6 @@
 
 namespace SfCod\EmailEngineBundle\Repository;
 
-use ReflectionClass;
 use SfCod\EmailEngineBundle\Exception\RepositoryUnavailableException;
 use SfCod\EmailEngineBundle\Template\TemplateInterface;
 use SfCod\EmailEngineBundle\Template\TwigTemplateAwareInterface;
@@ -129,7 +128,6 @@ class TwigFileRepository implements RepositoryInterface
      * @param array $arguments
      *
      * @throws RepositoryUnavailableException
-     * @throws \ReflectionException
      */
     public function connect(TemplateInterface $template, array $arguments = [])
     {

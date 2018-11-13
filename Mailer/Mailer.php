@@ -43,12 +43,10 @@ class Mailer
      * EmailSender constructor.
      *
      * @param ContainerInterface $container
-     * @param LoggerInterface $logger
      */
-    public function __construct(ContainerInterface $container, LoggerInterface $logger)
+    public function __construct(ContainerInterface $container)
     {
         $this->container = $container;
-        $this->logger = $logger;
     }
 
     /**
@@ -69,6 +67,16 @@ class Mailer
     public function setSenders(array $senders): void
     {
         $this->senders = $senders;
+    }
+
+    /**
+     * Set Logger
+     *
+     * @param LoggerInterface $logger
+     */
+    public function setLogger(LoggerInterface $logger): void
+    {
+        $this->logger = $logger;
     }
 
     /**
@@ -104,9 +112,7 @@ class Mailer
                     break;
                 }
             } catch (RepositoryUnavailableException $e) {
-                if ($this->container->get('kernel')->isDebug()) {
-                    $this->logger->error($e->getMessage(), ['exception' => $e]);
-                }
+                $this->logger->error($e->getMessage(), ['exception' => $e]);
 
                 // Try next sender
             }

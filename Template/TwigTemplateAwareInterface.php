@@ -4,6 +4,7 @@ namespace SfCod\EmailEngineBundle\Template;
 
 /**
  * Interface TwigTemplateAwareInterface
+ *
  * @package SfCod\EmailEngineBundle\Template
  */
 interface TwigTemplateAwareInterface

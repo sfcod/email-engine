@@ -119,6 +119,7 @@ class EmailEngineExtension extends Extension
                 new Reference(ContainerInterface::class),
                 new Reference(LoggerInterface::class),
             ])
+            ->addMethodCall('setLogger', [new Reference(LoggerInterface::class)])
             ->addMethodCall('setSenders', [$senders]);
 
         $container->setDefinition(Mailer::class, $mailer);

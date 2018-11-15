@@ -77,50 +77,57 @@ class EmailEngineExtension extends Extension
      */
     private function createSenders(array $config, ContainerBuilder $container)
     {
-        $senders = [];
+        $configuration = [];
         $mainSender = $this->getSender($config['main_sender'], $config);
 
         if (isset($mainSender['chain'])) {
             foreach ($mainSender['chain']['senders'] as $sender) {
-                $senders[$sender] = $this->getSender($sender, $config);
+                $configuration[$sender] = $this->getSender($sender, $config);
             }
         } else {
-            $senders[$config['main_sender']] = $mainSender;
+            $configuration[$config['main_sender']] = $mainSender;
         }
 
-        foreach ($senders as $name => $config) {
-            if (false === isset($config['sender'], $config['repository']) ||
-                false === isset($config['sender']['class'], $config['repository']['class'])) {
-                throw  new InvalidConfigurationException(sprintf('"sender" and "repository" must be defined in "%s" sender.', $name));
+        $senders = [];
+        $repositories = [];
+        foreach ($configuration as $senderName => $senderConfig) {
+            if (false === isset($senderConfig['sender'], $senderConfig['repository']) ||
+                false === isset($senderConfig['sender']['class'], $senderConfig['repository']['class'])) {
+                throw new InvalidConfigurationException(sprintf('"sender" and "repository" must be defined in "%s" sender.', $senderName));
             }
 
-            $sender = new Definition($config['sender']['class']);
+            $sender = new Definition($senderConfig['sender']['class']);
             $sender
                 ->setPublic(true)
                 ->setAutoconfigured(true)
                 ->setAutowired(true);
 
-            $repository = new Definition($config['repository']['class']);
+            $repository = new Definition($senderConfig['repository']['class']);
             $repository
                 ->setPublic(true)
                 ->setAutoconfigured(true)
                 ->setAutowired(true);
 
             $container->addDefinitions([
-                $config['repository']['class'] => $repository,
-                $config['sender']['class'] => $sender,
+                $senderConfig['repository']['class'] => $repository,
+                $senderConfig['sender']['class'] => $sender,
             ]);
+
+            // Prepare senders and repositories for injecting into mailer
+            $senders[$senderConfig['sender']['class']] = $sender;
+            $repositories[$senderConfig['repository']['class']] = $repository;
         }
 
         $mailer = new Definition(Mailer::class);
         $mailer
             ->setPublic(true)
             ->setArguments([
-                new Reference(ContainerInterface::class),
+                new Reference(ParameterResolverInterface::class),
                 new Reference(LoggerInterface::class),
             ])
-            ->addMethodCall('setLogger', [new Reference(LoggerInterface::class)])
-            ->addMethodCall('setSenders', [$senders]);
+            ->addMethodCall('setConfiguration', [$configuration])
+            ->addMethodCall('setSenders', [$senders])
+            ->addMethodCall('setRepositories', [$repositories]);
 
         $container->setDefinition(Mailer::class, $mailer);
     }

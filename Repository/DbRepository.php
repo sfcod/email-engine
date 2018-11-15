@@ -36,6 +36,7 @@ class DbRepository implements RepositoryInterface
      * DbRepository constructor.
      *
      * @param EntityManagerInterface $em
+     * @param Twig_Environment $twig
      */
     public function __construct(EntityManagerInterface $em, Twig_Environment $twig)
     {

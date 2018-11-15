@@ -11,7 +11,6 @@ use SfCod\EmailEngineBundle\Template\ParametersAwareInterface;
 use SfCod\EmailEngineBundle\Template\Params\ParameterResolverInterface;
 use SfCod\EmailEngineBundle\Template\RepositoryAwareInterface;
 use SfCod\EmailEngineBundle\Template\TemplateInterface;
-use Symfony\Component\DependencyInjection\ContainerInterface;
 
 /**
  * Class Mailer
@@ -23,6 +22,13 @@ use Symfony\Component\DependencyInjection\ContainerInterface;
 class Mailer
 {
     /**
+     * Configuration with ordered senders
+     *
+     * @var array
+     */
+    private $configuration = [];
+
+    /**
      * Senders for email sending
      *
      * @var SenderInterface[]
@@ -30,9 +36,16 @@ class Mailer
     private $senders = [];
 
     /**
-     * @var ContainerInterface
+     * Repositories list for senders
+     *
+     * @var RepositoryInterface[]
      */
-    private $container;
+    private $repositories = [];
+
+    /**
+     * @var ParameterResolverInterface
+     */
+    private $parameterResolver;
 
     /**
      * @var LoggerInterface
@@ -42,21 +55,13 @@ class Mailer
     /**
      * EmailSender constructor.
      *
-     * @param ContainerInterface $container
+     * @param ParameterResolverInterface $parameterResolver
+     * @param LoggerInterface $logger
      */
-    public function __construct(ContainerInterface $container)
+    public function __construct(ParameterResolverInterface $parameterResolver, LoggerInterface $logger)
     {
-        $this->container = $container;
-    }
-
-    /**
-     * Get senders
-     *
-     * @return array
-     */
-    public function getSenders(): array
-    {
-        return $this->senders;
+        $this->parameterResolver = $parameterResolver;
+        $this->logger = $logger;
     }
 
     /**
@@ -64,19 +69,25 @@ class Mailer
      *
      * @param array $senders
      */
-    public function setSenders(array $senders): void
+    public function setSenders(array $senders)
     {
         $this->senders = $senders;
     }
 
     /**
-     * Set Logger
-     *
-     * @param LoggerInterface $logger
+     * @param RepositoryInterface[] $repositories
      */
-    public function setLogger(LoggerInterface $logger): void
+    public function setRepositories(array $repositories)
     {
-        $this->logger = $logger;
+        $this->repositories = $repositories;
+    }
+
+    /**
+     * @param array $configuration
+     */
+    public function setConfiguration(array $configuration)
+    {
+        $this->configuration = $configuration;
     }
 
     /**
@@ -92,7 +103,7 @@ class Mailer
     {
         $sentCount = 0;
 
-        foreach ($this->senders as $config) {
+        foreach ($this->configuration as $config) {
             try {
                 $concreteTemplate = clone $template;
                 $sender = array_merge($config['sender'], ['options' => $options]);
@@ -103,7 +114,7 @@ class Mailer
                 }
 
                 if ($concreteTemplate instanceof ParametersAwareInterface) {
-                    $concreteTemplate->setParameterResolver($this->container->get(ParameterResolverInterface::class));
+                    $concreteTemplate->setParameterResolver($this->parameterResolver);
                 }
 
                 if ($concreteSender->send($concreteTemplate, $emails)) {
@@ -124,15 +135,15 @@ class Mailer
     /**
      * Make email engine sender
      *
-     * @param string $sender
+     * @param string $senderName
      * @param MessageOptionsInterface|null $options
      *
      * @return SenderInterface
      */
-    protected function makeSender(string $sender, ?MessageOptionsInterface $options = null): SenderInterface
+    protected function makeSender(string $senderName, ?MessageOptionsInterface $options = null): SenderInterface
     {
         /** @var SenderInterface $sender */
-        $sender = $this->container->get($sender);
+        $sender = $this->senders[$senderName];
 
         if ($options) {
             $sender->setOptions($options);
@@ -144,16 +155,16 @@ class Mailer
     /**
      * Make email engine repository
      *
-     * @param string $repository
+     * @param string $repositoryName
      * @param TemplateInterface $template
      * @param array $arguments
      *
      * @return RepositoryInterface
      */
-    protected function makeRepository(string $repository, TemplateInterface $template, array $arguments = []): RepositoryInterface
+    protected function makeRepository(string $repositoryName, TemplateInterface $template, array $arguments = []): RepositoryInterface
     {
         /** @var RepositoryInterface $repository */
-        $repository = $this->container->get($repository);
+        $repository = $this->repositories[$repositoryName];
         $repository->connect($template, $arguments);
 
         return $repository;

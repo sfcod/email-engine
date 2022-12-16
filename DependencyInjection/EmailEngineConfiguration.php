@@ -5,6 +5,7 @@ namespace SfCod\EmailEngineBundle\DependencyInjection;
 use Symfony\Component\Config\Definition\Builder\ArrayNodeDefinition;
 use Symfony\Component\Config\Definition\Builder\TreeBuilder;
 use Symfony\Component\Config\Definition\ConfigurationInterface;
+use Symfony\Component\HttpKernel\Kernel;
 
 /**
  * Class EmailEngineConfiguration
@@ -22,8 +23,13 @@ class EmailEngineConfiguration implements ConfigurationInterface
      */
     public function getConfigTreeBuilder()
     {
-        $treeBuilder = new TreeBuilder();
-        $rootNode = $treeBuilder->root('sfcod_email_engine');
+        if (Kernel::VERSION_ID >= 40300) {
+            $treeBuilder = new TreeBuilder('sfcod_email_engine');
+            $rootNode = $treeBuilder->getRootNode();
+        } else {
+            $treeBuilder = new TreeBuilder();
+            $rootNode = $treeBuilder->root('sfcod_email_engine');
+        }
 
         $this->addMainSender($rootNode);
         $this->addSendersSection($rootNode);

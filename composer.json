@@ -15,14 +15,14 @@
         }
     ],
     "require": {
-        "php": "^7.4",
-        "symfony/framework-bundle": "^5.4",
+        "php": "^8.0",
+        "symfony/framework-bundle": "^5.4 || ^6.0",
         "symfony/monolog-bundle": "^3.1",
-        "symfony/dotenv": "^5.4",
+        "symfony/dotenv": "^5.4 || ^6.0",
         "symfony/swiftmailer-bundle": "^3.1"
     },
     "require-dev": {
-        "symfony/phpunit-bridge": "^5.4",
+        "symfony/phpunit-bridge": "^5.4 || ^6.0",
         "friendsofphp/php-cs-fixer": "^2.8"
     },
     "autoload": {

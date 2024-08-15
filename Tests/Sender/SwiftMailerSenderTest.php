@@ -7,7 +7,7 @@ use SfCod\EmailEngineBundle\Example\TestEmailOptions;
 use SfCod\EmailEngineBundle\Example\TestEmailTemplate;
 use SfCod\EmailEngineBundle\Mailer\Mailer;
 use SfCod\EmailEngineBundle\Repository\TwigFileRepository;
-use SfCod\EmailEngineBundle\Sender\SwiftMailerSender;
+use SfCod\EmailEngineBundle\Sender\SymfonyMailerSender;
 use SfCod\EmailEngineBundle\Template\Params\ParameterResolver;
 use SfCod\EmailEngineBundle\Tests\Data\LoadTrait;
 
@@ -29,7 +29,7 @@ class SwiftMailerSenderTest extends TestCase
      */
     public function testSend()
     {
-        $this->configure(SwiftMailerSender::class, TwigFileRepository::class);
+        $this->configure(SymfonyMailerSender::class, TwigFileRepository::class);
 
         $mailer = $this->container->get(Mailer::class);
 
@@ -44,11 +44,11 @@ class SwiftMailerSenderTest extends TestCase
     /**
      * Mock sender
      *
-     * @return SwiftMailerSender
+     * @return SymfonyMailerSender
      */
-    private function mockSender(): SwiftMailerSender
+    private function mockSender(): SymfonyMailerSender
     {
-        $sender = new SwiftMailerSender(new \Swift_Mailer(new \Swift_Transport_NullTransport(new \Swift_Events_SimpleEventDispatcher())));
+        $sender = new SymfonyMailerSender(new \Swift_Mailer(new \Swift_Transport_NullTransport(new \Swift_Events_SimpleEventDispatcher())));
 
         return $sender;
     }

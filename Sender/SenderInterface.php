@@ -2,6 +2,7 @@
 
 namespace SfCod\EmailEngineBundle\Sender;
 
+use Symfony\Component\HttpFoundation\Response;
 use SfCod\EmailEngineBundle\Template\TemplateInterface;
 
 /**
@@ -28,7 +29,7 @@ interface SenderInterface
      * @param TemplateInterface $template
      * @param array|string $emails
      *
-     * @return bool
+     * @return Response
      */
-    public function send(TemplateInterface $template, $emails): bool;
+    public function send(TemplateInterface $template, $emails): Response;
 }

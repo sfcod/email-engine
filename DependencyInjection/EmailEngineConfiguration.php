@@ -21,7 +21,7 @@ class EmailEngineConfiguration implements ConfigurationInterface
      *
      * @return TreeBuilder The tree builder
      */
-    public function getConfigTreeBuilder()
+    public function getConfigTreeBuilder(): TreeBuilder
     {
         if (Kernel::VERSION_ID >= 40300) {
             $treeBuilder = new TreeBuilder('sfcod_email_engine');

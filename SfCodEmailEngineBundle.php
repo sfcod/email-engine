@@ -4,6 +4,7 @@ namespace SfCod\EmailEngineBundle;
 
 use SfCod\EmailEngineBundle\DependencyInjection\EmailEngineExtension;
 use Symfony\Component\HttpKernel\Bundle\Bundle;
+use Symfony\Component\DependencyInjection\Extension\ExtensionInterface;
 
 /**
  * Class EmailEngineBundle
@@ -19,7 +20,7 @@ class SfCodEmailEngineBundle extends Bundle
      *
      * @return null|EmailEngineExtension|\Symfony\Component\DependencyInjection\Extension\ExtensionInterface
      */
-    public function getContainerExtension()
+    public function getContainerExtension(): ?ExtensionInterface
     {
         return new EmailEngineExtension();
     }

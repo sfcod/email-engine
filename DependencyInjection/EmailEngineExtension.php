@@ -46,7 +46,7 @@ class EmailEngineExtension extends Extension
      *
      * @return string
      */
-    public function getAlias()
+    public function getAlias(): string
     {
         return 'sfcod_email_engine';
     }

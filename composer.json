@@ -19,7 +19,7 @@
         "symfony/framework-bundle": "^v6.4.10",
         "symfony/monolog-bundle": "^3.10.0",
         "symfony/dotenv": "^v6.4.10",
-        "symfony/mailer": "^v6.4.10"
+        "symfony/mailer": "^v6.4.0"
     },
     "require-dev": {
         "symfony/phpunit-bridge": "^v6.4.10",

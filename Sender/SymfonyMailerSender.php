@@ -42,7 +42,7 @@ class SymfonyMailerSender extends AbstractSender
      * @return Response
      * @throws TransportExceptionInterface
      */
-    public function send(TemplateInterface $template, $emails): Response
+    public function send(TemplateInterface $template, $emails): bool
     {
         $message = (new Email())
             ->subject($template->getSubject())
@@ -56,6 +56,8 @@ class SymfonyMailerSender extends AbstractSender
             }
         }
 
-        return $this->mailer->send($message);
+        $this->mailer->send($message);
+
+        return true;
     }
 }

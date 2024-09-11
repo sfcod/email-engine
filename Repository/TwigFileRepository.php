@@ -5,7 +5,7 @@ namespace SfCod\EmailEngineBundle\Repository;
 use SfCod\EmailEngineBundle\Exception\RepositoryUnavailableException;
 use SfCod\EmailEngineBundle\Template\TemplateInterface;
 use SfCod\EmailEngineBundle\Template\TwigTemplateAwareInterface;
-use Twig_Environment;
+use Twig\Environment;
 
 /**
  * Class TwigFileRepository
@@ -24,16 +24,16 @@ class TwigFileRepository implements RepositoryInterface
     protected $template;
 
     /**
-     * @var Twig_Environment
+     * @var Environment
      */
     protected $twig;
 
     /**
      * TwigFileRepository constructor.
      *
-     * @param Twig_Environment $twig
+     * @param Environment $twig
      */
-    public function __construct(Twig_Environment $twig)
+    public function __construct(Environment $twig)
     {
         $this->twig = $twig;
     }
@@ -81,7 +81,7 @@ class TwigFileRepository implements RepositoryInterface
             return $this->renderBlock('sender_name', $data);
         }
 
-        return getenv('SENDER_NAME');
+        return $_ENV['SENDER_NAME'];
     }
 
     /**
@@ -99,7 +99,7 @@ class TwigFileRepository implements RepositoryInterface
             return $this->renderBlock('sender_email', $data);
         }
 
-        return getenv('SENDER_EMAIL');
+        return $_ENV['SENDER_EMAIL'];
     }
 
     /**

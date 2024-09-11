@@ -6,7 +6,7 @@ use Doctrine\ORM\EntityManagerInterface;
 use SfCod\EmailEngineBundle\Entity\EmailEntityInterface;
 use SfCod\EmailEngineBundle\Exception\RepositoryUnavailableException;
 use SfCod\EmailEngineBundle\Template\TemplateInterface;
-use Twig_Environment;
+use Twig\Environment;
 
 /**
  * Class DbRepository
@@ -28,7 +28,7 @@ class DbRepository implements RepositoryInterface
     protected $em;
 
     /**
-     * @var Twig_Environment
+     * @var Environment
      */
     protected $twig;
 
@@ -38,7 +38,7 @@ class DbRepository implements RepositoryInterface
      * @param EntityManagerInterface $em
      * @param Twig_Environment $twig
      */
-    public function __construct(EntityManagerInterface $em, Twig_Environment $twig)
+    public function __construct(EntityManagerInterface $em, Environment $twig)
     {
         $this->em = $em;
         $this->twig = $twig;
@@ -104,7 +104,7 @@ class DbRepository implements RepositoryInterface
      */
     public function getSenderNameTemplate(array $data): string
     {
-        return getenv('SENDER_NAME');
+        return $_ENV['SENDER_NAME'];
     }
 
     /**
@@ -116,7 +116,7 @@ class DbRepository implements RepositoryInterface
      */
     public function getSenderEmailTemplate(array $data): string
     {
-        return getenv('SENDER_EMAIL');
+        return $_ENV['SENDER_EMAIL'];
     }
 
     /**

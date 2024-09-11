@@ -75,7 +75,7 @@ class DbRepositoryTest extends TestCase
 
         $subject = $repository->getSenderNameTemplate([]);
 
-        $this->assertEquals(getenv('SENDER_NAME'), $subject);
+        $this->assertEquals($_ENV['SENDER_NAME'], $subject);
     }
 
     /**
@@ -94,7 +94,7 @@ class DbRepositoryTest extends TestCase
 
         $subject = $repository->getSenderEmailTemplate([]);
 
-        $this->assertEquals(getenv('SENDER_EMAIL'), $subject);
+        $this->assertEquals($_ENV['SENDER_EMAIL'], $subject);
     }
 
     /**

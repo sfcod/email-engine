@@ -38,7 +38,7 @@ trait LoadTrait
 
         $extension = new EmailEngineExtension();
         $container = new ContainerBuilder();
-        $container->setParameter('kernel.project_dir', getenv('KERNEL_PROJECT_DIR'));
+        $container->setParameter('kernel.project_dir', $_ENV['KERNEL_PROJECT_DIR']);
         $container->setParameter('kernel.root_dir', realpath(__DIR__ . '/../../../../SfCod/'));
         $container->set(LoggerInterface::class, new Logger('test'));
         $container->set(\Swift_Mailer::class, new \Swift_Mailer(new \Swift_Transport_NullTransport(new \Swift_Events_SimpleEventDispatcher())));
